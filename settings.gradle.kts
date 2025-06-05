@@ -1,14 +1,12 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
+    }
+    plugins {
+        // ... other plugin declarations
+        id("com.google.devtools.ksp") version "2.0.0-1.0.21" // <-- Add this
     }
 }
 dependencyResolutionManagement {

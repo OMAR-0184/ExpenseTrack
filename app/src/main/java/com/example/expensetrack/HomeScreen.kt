@@ -2,30 +2,57 @@ package com.example.expensetrack
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.expensetrack.data.model.ExpenseEntity
+import com.example.expensetrack.viewmodel.HomeViewModel
+import com.example.expensetrack.viewmodel.HomeViewModelFactory
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview(showBackground = true)
-fun Home() {
-    Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF121212)) {
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+fun Home(onNavigateToAddExpense: () -> Unit) { // Added navigation lambda
+    val viewModel: HomeViewModel = HomeViewModelFactory(LocalContext.current).create(HomeViewModel::class.java)
+    val state = viewModel.allExpenses.collectAsState(initial = emptyList())
+
+    val expenses = viewModel.getTotalExpense(state.value)
+    val balance = viewModel.getBalance(state.value)
+    val transactions = viewModel.getTransactions(state.value)
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigateToAddExpense,
+                containerColor = Color(0xFFBB86FC), // Example FAB color
+                contentColor = Color.White
+            ) {
+                Icon(Icons.Filled.Add, "Add new expense/income")
+            }
+        },
+        containerColor = Color(0xFF121212) // Scaffold background color
+    ) { paddingValues ->
+        ConstraintLayout(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) { // Apply padding values to ConstraintLayout
             val (header, card, body) = createRefs()
 
             // Header
@@ -60,31 +87,31 @@ fun Home() {
                 )
             }
 
-            // Expense Card
+            // Summary Card
             ExpenseSummaryCard(
-                balance = "₹5,000",
-                totalSpent = "₹1,000",
-                transactions = 5,
+                balance = balance,
+                totalSpent = expenses,
+                transactions = transactions,
                 modifier = Modifier.constrainAs(card) {
                     top.linkTo(header.bottom, margin = (-40).dp)
                     centerHorizontallyTo(parent)
                 }
             )
 
-            // Transactions
-            Column(
+            // Transaction List
+            transactionList(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp) // Adjusted padding
                     .constrainAs(body) {
                         top.linkTo(card.bottom, margin = 24.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom) // Ensure it fills remaining space
                         height = Dimension.fillToConstraints
-                    }
-            ) {
-                transactionList()
-            }
+                    },
+                list = state.value
+            )
         }
     }
 }
@@ -110,7 +137,7 @@ fun ExpenseSummaryCard(
                 .padding(20.dp)
         ) {
             Text("Current Balance", color = Color(0xFFB0BEC5), fontSize = 14.sp)
-            Text(balance, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text("₹$balance", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold) // Added Rupee symbol
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -119,7 +146,7 @@ fun ExpenseSummaryCard(
             ) {
                 Column {
                     Text("Total Spent", color = Color(0xFF90A4AE), fontSize = 12.sp)
-                    Text(totalSpent, color = Color.White, fontSize = 16.sp)
+                    Text("₹$totalSpent", color = Color.White, fontSize = 16.sp) // Added Rupee symbol
                 }
 
                 Column {
@@ -132,40 +159,31 @@ fun ExpenseSummaryCard(
 }
 
 @Composable
-fun transactionList() {
-    Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Recent Transactions", color = Color.White, fontSize = 18.sp)
-            Text("See All", color = Color.Gray, fontSize = 12.sp)
+fun transactionList(modifier: Modifier, list: List<ExpenseEntity>) {
+    LazyColumn(modifier = modifier) { // Removed unnecessary horizontal padding here as it's in the parent
+        item {
+            Box(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) { // Added bottom padding
+                Text(
+                    "Recent Transactions",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.align(Alignment.CenterStart)
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        transactionItem(
-            title = "Groceries",
-            amount = "- ₹750",
-            icon = Icons.Default.CheckCircle,
-            date = "Jun 3, 2025"
-        )
-        transactionItem(
-            title = "Salary",
-            amount = "+ ₹20,000",
-            icon = Icons.Default.CheckCircle,
-            date = "Jun 1, 2025"
-        )
-        transactionItem(
-            title = "Electricity Bill",
-            amount = "- ₹1,200",
-            icon = Icons.Default.CheckCircle,
-            date = "May 30, 2025"
-        )
+        items(list) {
+            transactionItem(
+                title = it.title,
+                amount = if (it.income > 0) "+ ₹${String.format("%.2f", it.income)}" else "- ₹${String.format("%.2f", it.expense)}", // Formatted amounts
+                icon = Icons.Default.CheckCircle, // You might want dynamic icons based on category/type
+                date = it.date
+            )
+        }
     }
 }
+
 
 @Composable
 fun transactionItem(
@@ -205,7 +223,7 @@ fun transactionItem(
         Text(
             text = amount,
             fontSize = 14.sp,
-            color = if (amount.startsWith("-")) Color(0xFFFF6F61) else Color(0xFF81C784),
+            color = if (amount.contains("-")) Color(0xFFFF6F61) else Color(0xFF81C784), // Check for '-' not `startsWith("-")`
             fontWeight = FontWeight.Bold
         )
     }
