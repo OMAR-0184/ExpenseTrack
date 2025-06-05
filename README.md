@@ -4,21 +4,41 @@ It's a work in progress, a testament to the fact that even small steps lead to b
 
 ✨ What's Cooking So Far?
 Money In, Money Out: Basic tracking of your income and expenses. Because adulting.
+
+
 The Big Number: A real-time balance so you know if you're rich or just pretending.
+
+
 Swipe-to-Delete: Gone in a flash! Swiped away a transaction by mistake? Oops! (Just kidding, it's a feature, not a bug... usually.)
+
+
 Secret Stash (on your phone): All your data lives happily on your device, powered by Room Database. No cloud spying on your late-night pizza habits.
 Shiny UI: Built with Jetpack Compose, so it's all smooth animations and less XML pain.
+
+
 🚀 The Techy Bits (aka "My New Best Friends")
+
+
 Kotlin: My favorite language for yelling at the compiler (and sometimes getting it to listen).
+
+
 Jetpack Compose: The reason my UI looks halfway decent.
+
+
 Room Database: Because even digital money needs a home.
+
+
 ViewModels & Flow: Keeping things organized so my UI doesn't throw a fit.
+
+
 Coroutines: For doing stuff in the background without making the app stutter like I do when I see my credit card bill.
+
+
 
 🛠️ Get Your Hands Dirty!
 Want to peek under the hood or even lend a hand? It's easy!
 
-Clone it: git clone https://github.com/YOUR_USERNAME/Expenso.git
+Clone it: git clone https://github.com/OMAR-0184/Expenso.git
 Open it: Fire up Android Studio.
 Sync it: Let Gradle do its magic.
 Run it: Hit that green play button and watch the magic happen (or debug a crash, it's all part of the learning!).
@@ -44,6 +64,3 @@ This project is open-source and chilling under the MIT License. See LICENSE for 
 📞 Reach Out!
 Got questions, suggestions, or just want to tell me I'm doing a great job (or point out a typo)?
 
-Your Name - your_email@example.com
-
-Project Link: https://github.com/YOUR_USERNAME/Expenso
