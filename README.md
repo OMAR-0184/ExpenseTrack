@@ -9,11 +9,23 @@ Money In, Money Out: Basic tracking of your income and expenses. Because adultin
 The Big Number: A real-time balance so you know if you're rich or just pretending.
 
 
-Swipe-to-Delete: Gone in a flash! Swiped away a transaction by mistake? Oops! (Just kidding, it's a feature, not a bug... usually.)
-
 
 Secret Stash (on your phone): All your data lives happily on your device, powered by Room Database. No cloud spying on your late-night pizza habits.
 Shiny UI: Built with Jetpack Compose, so it's all smooth animations and less XML pain.
+
+
+
+Home Screen:
+
+
+![WhatsApp Image 2025-06-27 at 11 56 55 AM](https://github.com/user-attachments/assets/f8f1a5ea-c20c-433c-9846-fd86bff23101)
+
+
+Add Expense Screen:
+
+
+
+![WhatsApp Image 2025-06-27 at 11 57 22 AM](https://github.com/user-attachments/assets/6c19ba84-db99-41bb-ae2c-e5de8c0f213b)
 
 
 🚀 The Techy Bits (aka "My New Best Friends")
